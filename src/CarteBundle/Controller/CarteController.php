@@ -58,6 +58,43 @@ class CarteController extends Controller
         ));
     }
 
+    public function creationCarteExtAction($idExt)
+    {
+        $carte = new Carte();
+        $formBuilder = $this->createFormBuilder($carte)
+            ->add('nom', 'text',array('label'=>'Nom de la carte : '))
+            ->add('cout', 'integer',array('label'=>'Coût de la carte : '))
+            ->add('pouvoir', 'text',array('label'=>'Pouvoir de la carte : '))
+            ->add('image', 'text',array('label'=>'Image de la carte : '))
+            ->add('dieu', EntityType::class, array(
+                'class' => 'CarteBundle:Dieu',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.nom', 'ASC');
+                },
+                'choice_label' => 'nom',
+            ));
+        $form = $formBuilder->getForm();
+        $request = $this->get('request');
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+        }
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $repository = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('CarteBundle:Extension');
+            $extension = $repository->find($idExt);
+            $carte->setExtension($extension);
+            $em->persist($carte);
+            $em->flush();
+            return $this->redirect($this->generateUrl('affichage_extension',array('idExt'=>$idExt)));
+        }
+        return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
     public function creationExtensionAction()
     {
         $extension = new Extension();
@@ -88,6 +125,28 @@ class CarteController extends Controller
         $cartes = $repository->findAll();
         return $this->render('CarteBundle:Affichages:liste_cartes.html.twig', array(
             'cartes' => $cartes
+        ));
+    }
+
+    public function affichageExtensionAction($idExt)
+    {
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $ext = $repository->find($idExt);
+        return $this->render('CarteBundle:Affichages:affichage_extension.html.twig', array(
+            'extension' => $ext
+        ));
+    }
+
+    public function affichageListeExtensionAction()
+    {
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $extensions = $repository->findAll();
+        return $this->render('CarteBundle:Affichages:liste_extensions.html.twig', array(
+            'extensions' => $extensions
         ));
     }
 }

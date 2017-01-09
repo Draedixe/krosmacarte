@@ -2,6 +2,7 @@
 
 namespace CarteBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use UserBundle\Entity\User;
 
@@ -30,10 +31,20 @@ class Extension
     private $nom;
 
     /**
+     * @ORM\OneToMany(targetEntity="CarteBundle\Entity\Carte", mappedBy="extension")
+     */
+    private $cartes;
+
+    /**
      * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
     private $createur;
+
+    public function __construct()
+    {
+        $this->cartes = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -82,6 +93,23 @@ class Extension
     public function setCreateur($createur)
     {
         $this->createur = $createur;
+    }
+
+    public function getCartes()
+    {
+        return $this->cartes;
+    }
+
+    public function addCarte(Carte $carte)
+    {
+        $this->cartes[] = $carte;
+
+        return $this;
+    }
+
+    public function removeApplication(Carte $carte)
+    {
+        $this->cartes->removeElement($carte);
     }
 
 

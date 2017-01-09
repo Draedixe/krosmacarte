@@ -1,0 +1,15 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+
+{% block title %}Krosmacarte - {{ extension.nom }}{% endblock %}
+
+{% block fos_user_content %}
+
+
+    <h2>{{ extension.nom }}</h2>
+    <ul>
+        {% for carte in extension.cartes %}
+            <li>{{ carte.nom }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
