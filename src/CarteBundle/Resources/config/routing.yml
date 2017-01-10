@@ -29,3 +29,7 @@ liste_extensions:
 affichage_extension:
     path: /extension/affichage/{idExt}
     defaults: { _controller: CarteBundle:Carte:affichageExtension }
+
+liste_extension_perso:
+    path: /extension/liste_perso
+    defaults: { _controller: CarteBundle:Carte:affichageListeExtensionPerso }

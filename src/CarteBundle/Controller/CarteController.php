@@ -8,6 +8,7 @@
 
 namespace CarteBundle\Controller;
 
+use CarteBundle\Form\CarteType;
 use CarteBundle\Entity\Carte;
 use CarteBundle\Entity\Extension;
 use Doctrine\ORM\EntityRepository;
@@ -19,30 +20,7 @@ class CarteController extends Controller
     public function creationCarteAction()
     {
         $carte = new Carte();
-        $formBuilder = $this->createFormBuilder($carte)
-            ->add('nom', 'text',array('label'=>'Nom de la carte : '))
-            ->add('cout', 'integer',array('label'=>'Coût de la carte : '))
-            ->add('pouvoir', 'text',array('label'=>'Pouvoir de la carte : '))
-            ->add('image', 'text',array('label'=>'Image de la carte : '))
-            ->add('dieu', EntityType::class, array(
-                'class' => 'CarteBundle:Dieu',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->orderBy('u.nom', 'ASC');
-                },
-                'choice_label' => 'nom',
-            ))
-            ->add('extension', EntityType::class, array(
-                'class' => 'CarteBundle:Extension',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.createur = :createur')
-                        ->setParameter('createur', $this->getUser())
-                        ->orderBy('u.nom', 'ASC');
-                },
-                'choice_label' => 'nom',
-            ));
-        $form = $formBuilder->getForm();
+        $form = $this->createForm(new CarteType($this->getUser(),false),$carte);
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
@@ -51,7 +29,7 @@ class CarteController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($carte);
             $em->flush();
-            return $this->redirect($this->generateUrl('liste_cartes',array()));
+            return $this->redirect($this->generateUrl('affichage_extension',array('idExt'=>$carte->getExtension()->getId())));
         }
         return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
             'form' => $form->createView(),
@@ -61,30 +39,17 @@ class CarteController extends Controller
     public function creationCarteExtAction($idExt)
     {
         $carte = new Carte();
-        $formBuilder = $this->createFormBuilder($carte)
-            ->add('nom', 'text',array('label'=>'Nom de la carte : '))
-            ->add('cout', 'integer',array('label'=>'Coût de la carte : '))
-            ->add('pouvoir', 'text',array('label'=>'Pouvoir de la carte : '))
-            ->add('image', 'text',array('label'=>'Image de la carte : '))
-            ->add('dieu', EntityType::class, array(
-                'class' => 'CarteBundle:Dieu',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->orderBy('u.nom', 'ASC');
-                },
-                'choice_label' => 'nom',
-            ));
-        $form = $formBuilder->getForm();
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $extension = $repository->find($idExt);
+        $form = $this->createForm(new CarteType($this->getUser(),true),$carte);
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
         }
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $repository = $this->getDoctrine()
-                ->getManager()
-                ->getRepository('CarteBundle:Extension');
-            $extension = $repository->find($idExt);
             $carte->setExtension($extension);
             $em->persist($carte);
             $em->flush();
@@ -145,6 +110,17 @@ class CarteController extends Controller
             ->getManager()
             ->getRepository('CarteBundle:Extension');
         $extensions = $repository->findAll();
+        return $this->render('CarteBundle:Affichages:liste_extensions.html.twig', array(
+            'extensions' => $extensions
+        ));
+    }
+
+    public function affichageListeExtensionPersoAction()
+    {
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $extensions = $repository->findBy(array('createur' => $this->getUser()));
         return $this->render('CarteBundle:Affichages:liste_extensions.html.twig', array(
             'extensions' => $extensions
         ));

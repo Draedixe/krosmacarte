@@ -9,7 +9,8 @@
     <h2>{{ extension.nom }}</h2>
     <ul>
         {% for carte in extension.cartes %}
-            <li>{{ carte.nom }}</li>
+            <li>{{ carte.nom }} - {{ carte.cout }}PA - {{ carte.dieu.nom }}</li>
         {% endfor %}
     </ul>
+    <a href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte à l'extension</a>
 {% endblock %}
