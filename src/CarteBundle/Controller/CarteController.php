@@ -204,4 +204,25 @@ class CarteController extends Controller
         }
 
     }
+    public function supprimerExtensionAction($idExt)
+    {
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $extension = $repository->find($idExt);
+
+        if($extension != null) {
+            if ($extension->getCreateur() == $this->getUser()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($extension);
+                $em->flush();
+
+            }
+        }
+        return $this->redirect($this->generateUrl('liste_extension_perso',array()));
+    }
+
+    public function modifierCarteAction($idCarte){
+        //TODO
+    }
 }

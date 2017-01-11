@@ -38,6 +38,10 @@ supprimer_carte:
     path: /carte/supprimer/{idCarte}
     defaults: { _controller: CarteBundle:Carte:supprimerCarte }
 
+supprimer_extension:
+    path: /extension/supprimer/{idExt}
+    defaults: { _controller: CarteBundle:Carte:supprimerExtension }
+
 valider_carte:
     path: /carte/validation
     defaults: { _controller: CarteBundle:Carte:validerCarte }

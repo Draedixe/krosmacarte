@@ -31,7 +31,7 @@ class Extension
     private $nom;
 
     /**
-     * @ORM\OneToMany(targetEntity="CarteBundle\Entity\Carte", mappedBy="extension")
+     * @ORM\OneToMany(targetEntity="CarteBundle\Entity\Carte", mappedBy="extension", cascade={"remove"})
      */
     private $cartes;
 
