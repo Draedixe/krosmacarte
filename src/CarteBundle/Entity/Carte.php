@@ -68,6 +68,13 @@ class Carte
     private $dieu;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -218,5 +225,20 @@ class Carte
         $this->creature = $creature;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
 
 }

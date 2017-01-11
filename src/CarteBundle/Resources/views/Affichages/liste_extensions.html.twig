@@ -7,11 +7,13 @@
 
     <h3>Liste des extensions</h3>
 
+    <a role="button" class="btn btn-success" href="{{ path('creation_extension') }}">Créer une Extension</a>
+
     <ul>
         {% for extension in extensions %}
             <fieldset>
                 <legend><a href="{{ path('affichage_extension', { 'idExt': extension.id }) }}">{{ extension.nom }}</a></legend>
-                Créé par {{ extension.createur }}<br/>
+                Créée par {{ extension.createur }} le {{ extension.date | date('d/m/Y H:i:s') }}<br/>
                 {{ extension.cartes|length }} cartes<br/>
                 {% if app.user == extension.createur %}
                     <a role="button" class="btn btn-success" href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte</a>

@@ -84,6 +84,7 @@ class CarteController extends Controller
                 $carte->setPouvoir($pouvoir);
                 $carte->setImage($image);
                 $carte->setExtension($extension);
+                $carte->setDate(new \DateTime());
                 $em = $this->getDoctrine()->getManager();
                 if($type != null){
                     if(strcmp ($type,"crea") == 0){
@@ -129,9 +130,10 @@ class CarteController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $extension->setCreateur($this->getUser());
+            $extension->setDate(new \DateTime());
             $em->persist($extension);
             $em->flush();
-            return $this->redirect($this->generateUrl('liste_cartes',array()));
+            return $this->redirect($this->generateUrl('liste_extension_perso',array()));
         }
         return $this->render('CarteBundle:Formulaires:creer_extension.html.twig', array(
             'form' => $form->createView(),

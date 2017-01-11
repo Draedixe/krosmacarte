@@ -31,6 +31,13 @@ class Extension
     private $nom;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
+
+    /**
      * @ORM\OneToMany(targetEntity="CarteBundle\Entity\Carte", mappedBy="extension", cascade={"remove"})
      */
     private $cartes;
@@ -110,6 +117,22 @@ class Extension
     public function removeApplication(Carte $carte)
     {
         $this->cartes->removeElement($carte);
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param \DateTime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
     }
 
 

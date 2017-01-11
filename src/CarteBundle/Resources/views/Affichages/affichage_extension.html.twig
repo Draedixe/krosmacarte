@@ -7,6 +7,7 @@
 
 
     <h2>{{ extension.nom }}</h2>
+    Créée le {{ extension.date | date('d/m/Y H:i:s') }}
     <ul>
         {% for carte in extension.cartes %}
             <fieldset>
@@ -21,9 +22,14 @@
                 {% endif %}
                 Pouvoir : {{ carte.pouvoir }}<br/>
 
-                <a role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
+
+                {% if app.user == extension.createur %}
+                    <a role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
+                {% endif %}
             </fieldset>
         {% endfor %}
     </ul>
-    <a href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte à l'extension</a>
+    {% if app.user == extension.createur %}
+        <a role="button" class="btn btn-success" href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte</a>
+    {% endif %}
 {% endblock %}
