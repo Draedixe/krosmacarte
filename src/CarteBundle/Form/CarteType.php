@@ -9,6 +9,9 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CarteType extends AbstractType
@@ -55,6 +58,14 @@ class CarteType extends AbstractType
                 'choice_label' => 'nom',
             ))
         ;
+        $formModifier = function (FormInterface $form, $type = null) {
+            if(strcmp($type,"crea") == 0) {
+                $form->add('pdv', 'integer', array('mapped' => false))
+                    ->add('atk', 'integer', array('mapped' => false))
+                    ->add('atk', 'integer', array('mapped' => false))
+                    ->add('classe', 'text', array('mapped' => false));
+            }
+        };
         if($extension == false){
             $builder->add('extension', EntityType::class, array(
                 'class' => 'CarteBundle:Extension',

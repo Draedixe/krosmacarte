@@ -1,17 +1,58 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
-{% form_theme form 'form_table_layout.html.twig' %}
-
 {% block title %}Krosmacarte - Cartes{% endblock %}
 
 {% block fos_user_content %}
 
+    <script>
+        $(document).ready(function () {
+            $('.radioType').change(function () {
+                switch ($(this).val()) {
+                    case 'crea' :
+                        $("#formCrea").show();
+                        break;
+                    case 'sort' :
+                        $("#formCrea").hide();
+                        break;
+                }
+            })
+        });
+
+    </script>
     <h3>Création d'une carte</h3>
 
-    <div class="well">
-        <form method="post" {{ form_enctype(form) }}>
-            {{ form_widget(form) }}
-            <input type="submit" class="btn btn-primary" />
-        </form>
-    </div>
+    <form id="formCreation" action="{{ path('valider_carte') }}" method="post" >
+        <label for="nom">Nom de la carte :</label><input type="text" name="nom"/><br/>
+        <label for="cout">Cout de la carte :</label><input type="number" name="cout"/><br/>
+        <label for="pouvoir">Pouvoir de la carte :</label><input type="text" name="pouvoir"/><br/>
+        <label for="image">Image de la carte :</label><input type="text" name="image"/><br/>
+        <label for="dieu">Dieu associé :</label>
+        <select name="dieu" id="dieu">
+            {% for dieu in dieux %}
+                <option id="{{ dieu.nom }}">{{ dieu.nom }}</option>
+            {% endfor %}
+        </select><br/>
+
+        <input class="radioType" type="radio" name="type" value="sort" checked> Sort
+        <input class="radioType" type="radio" name="type" value="crea"> Créature<br>
+
+        <div id="formCrea" hidden>
+            <label for="pdv">Pdv de la créature :</label><input type="number" name="pdv"/><br/>
+            <label for="atk">Atk de la créature :</label><input type="number" name="atk"/><br/>
+            <label for="pm">PM de la créature :</label><input type="number" name="pm"/><br/>
+            <label for="classe">Classe de la créature :</label><input type="text" name="classe"/><br/>
+        </div>
+
+        <label for="extension">Extension :</label>
+        <select name="extension" id="extension">
+            {% if not extension is defined %}
+                    {% for extension in extensions %}
+                        <option value="extension_{{ extension.id }}">{{ extension.nom }}</option>
+                    {% endfor %}
+            {% else %}
+                <option value="extension_{{ extension.id }}">{{ extension.nom }}</option>
+            {% endif %}
+        </select><br/>
+        <input type="submit" value="Valider"/>
+    </form>
 {% endblock %}

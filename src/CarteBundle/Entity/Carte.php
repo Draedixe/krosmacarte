@@ -56,6 +56,12 @@ class Carte
     private $extension;
 
     /**
+     * @ORM\OneToOne(targetEntity="CarteBundle\Entity\Creature")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $creature;
+
+    /**
      * @ORM\ManyToOne(targetEntity="CarteBundle\Entity\Dieu")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -195,4 +201,22 @@ class Carte
     {
         return $this->dieu;
     }
+
+    /**
+     * @return Creature
+     */
+    public function getCreature()
+    {
+        return $this->creature;
+    }
+
+    /**
+     * @param Creature $creature
+     */
+    public function setCreature(Creature $creature)
+    {
+        $this->creature = $creature;
+    }
+
+
 }

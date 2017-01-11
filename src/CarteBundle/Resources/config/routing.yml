@@ -33,3 +33,14 @@ affichage_extension:
 liste_extension_perso:
     path: /extension/liste_perso
     defaults: { _controller: CarteBundle:Carte:affichageListeExtensionPerso }
+
+supprimer_carte:
+    path: /carte/supprimer/{idCarte}
+    defaults: { _controller: CarteBundle:Carte:supprimerCarte }
+
+valider_carte:
+    path: /carte/validation
+    defaults: { _controller: CarteBundle:Carte:validerCarte }
+    requirements:
+      _method: POST
+

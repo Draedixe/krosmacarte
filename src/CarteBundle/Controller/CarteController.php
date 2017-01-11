@@ -8,6 +8,7 @@
 
 namespace CarteBundle\Controller;
 
+use CarteBundle\Entity\Creature;
 use CarteBundle\Form\CarteType;
 use CarteBundle\Entity\Carte;
 use CarteBundle\Entity\Extension;
@@ -19,45 +20,100 @@ class CarteController extends Controller
 {
     public function creationCarteAction()
     {
-        $carte = new Carte();
-        $form = $this->createForm(new CarteType($this->getUser(),false),$carte);
-        $request = $this->get('request');
-        if ($request->getMethod() == 'POST') {
-            $form->bind($request);
-        }
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($carte);
-            $em->flush();
-            return $this->redirect($this->generateUrl('affichage_extension',array('idExt'=>$carte->getExtension()->getId())));
-        }
+        $repositoryE = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $repositoryD = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Dieu');
+
+        $extensions = $repositoryE->findBy(array('createur' => $this->getUser()));
+        $dieux = $repositoryD->findAll();
         return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
-            'form' => $form->createView(),
+            'dieux' => $dieux,
+            'extensions' => $extensions,
         ));
     }
 
     public function creationCarteExtAction($idExt)
     {
-        $carte = new Carte();
         $repository = $this->getDoctrine()
             ->getManager()
             ->getRepository('CarteBundle:Extension');
         $extension = $repository->find($idExt);
-        $form = $this->createForm(new CarteType($this->getUser(),true),$carte);
-        $request = $this->get('request');
-        if ($request->getMethod() == 'POST') {
-            $form->bind($request);
-        }
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $carte->setExtension($extension);
-            $em->persist($carte);
-            $em->flush();
-            return $this->redirect($this->generateUrl('affichage_extension',array('idExt'=>$idExt)));
-        }
+
+        $repositoryD = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Dieu');
+        $dieux = $repositoryD->findAll();
         return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
-            'form' => $form->createView(),
+            'dieux' => $dieux,
+            'extension' => $extension,
         ));
+    }
+
+    public function validerCarteAction()
+    {
+
+        $request = $this->get('request');
+        $carte = new Carte();
+        $nom = $request->get("nom");
+        $cout = $request->get("cout");
+        $dieu = $request->get("dieu");
+        $pouvoir = $request->get("pouvoir");
+        $image = $request->get("image");
+        $extensionN = $request->get("extension");
+        $type = $request->get("type");
+
+        $repositoryE = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Extension');
+        $repositoryD = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Dieu');
+        $extension = $repositoryE->find(substr($extensionN,10));
+        $dieu = $repositoryD->findOneBy(array('nom' => $dieu));
+
+
+        if($nom != null && $cout != null && $dieu != null && $pouvoir != null && $image != null && $extension != null)
+        {
+            if($extension->getCreateur() == $this->getUser()){
+                $carte->setNom($nom);
+                $carte->setCout($cout);
+                $carte->setDieu($dieu);
+                $carte->setPouvoir($pouvoir);
+                $carte->setImage($image);
+                $carte->setExtension($extension);
+                $em = $this->getDoctrine()->getManager();
+                if($type != null){
+                    if(strcmp ($type,"crea") == 0){
+                        $creature = new Creature();
+                        $atk = $request->get("atk");
+                        $pm = $request->get("pm");
+                        $pdv = $request->get("pdv");
+                        $classe = $request->get("classe");
+                        if($atk != null && $pm != null && $pdv != null && $classe != null)
+                        {
+                            $creature->setAtk($atk);
+                            $creature->setPm($pm);
+                            $creature->setPdv($pdv);
+                            $creature->setClasse($classe);
+                            $em->persist($creature);
+                            $carte->setCreature($creature);
+                        }
+
+                    }
+                }
+
+                $em->persist($carte);
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('affichage_extension',array('idExt' => $extension->getId())));
+            }
+
+        }
+        return $this->redirect($this->generateUrl('creation_carte',array()));
+
     }
 
     public function creationExtensionAction()
@@ -124,5 +180,28 @@ class CarteController extends Controller
         return $this->render('CarteBundle:Affichages:liste_extensions.html.twig', array(
             'extensions' => $extensions
         ));
+    }
+
+    public function supprimerCarteAction($idCarte)
+    {
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Carte');
+        $carte = $repository->find($idCarte);
+
+        if($carte != null) {
+            $extension = $carte->getExtension();
+            if ($extension->getCreateur() == $this->getUser()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($carte);
+                $em->flush();
+
+            }
+            return $this->redirect($this->generateUrl('affichage_extension', array('idExt' => $extension->getId())));
+        }
+        else{
+            return $this->redirect($this->generateUrl('liste_extension_perso',array()));
+        }
+
     }
 }

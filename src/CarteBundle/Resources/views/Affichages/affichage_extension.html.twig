@@ -9,7 +9,20 @@
     <h2>{{ extension.nom }}</h2>
     <ul>
         {% for carte in extension.cartes %}
-            <li>{{ carte.nom }} - {{ carte.cout }}PA - {{ carte.dieu.nom }}</li>
+            <fieldset>
+                <legend>{{ carte.nom }}</legend>
+                Cout :{{ carte.cout }}PA<br/>
+                Dieu :{{ carte.dieu.nom }}<br/>
+                {% if not carte.creature is null %}
+                    PM : {{ carte.creature.pm }}
+                    Atk : {{ carte.creature.atk }}
+                    Pdv : {{ carte.creature.pdv }}<br/>
+                    Classe : {{ carte.creature.classe }}<br/>
+                {% endif %}
+                Pouvoir : {{ carte.pouvoir }}<br/>
+
+                <a role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
+            </fieldset>
         {% endfor %}
     </ul>
     <a href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte à l'extension</a>
