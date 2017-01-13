@@ -9,6 +9,7 @@
 namespace CarteBundle\Controller;
 
 use CarteBundle\Entity\Creature;
+use CarteBundle\Entity\Note;
 use CarteBundle\Form\CarteType;
 use CarteBundle\Entity\Carte;
 use CarteBundle\Entity\Extension;
@@ -18,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class CarteController extends Controller
 {
+
     public function creationCarteAction()
     {
         $repositoryE = $this->getDoctrine()
@@ -85,6 +87,7 @@ class CarteController extends Controller
                 $carte->setImage($image);
                 $carte->setExtension($extension);
                 $carte->setDate(new \DateTime());
+                $note = new Note();
                 $em = $this->getDoctrine()->getManager();
                 if($type != null){
                     if(strcmp ($type,"crea") == 0){
@@ -106,8 +109,16 @@ class CarteController extends Controller
                     }
                 }
 
+                $em->persist($note);
+                $carte->setNote($note);
                 $em->persist($carte);
                 $em->flush();
+
+                $imagesDir = $this->get('kernel')->getRootDir() . '/../web/images/';
+                $creationDir = $this->get('kernel')->getRootDir() . '/../web/creations/';
+                $urlFont = $this->get('kernel')->getRootDir() . '/../web/fonts/';
+                $carte->genererCartePNG($imagesDir,$creationDir,$urlFont);
+
 
                 return $this->redirect($this->generateUrl('affichage_extension',array('idExt' => $extension->getId())));
             }
@@ -131,6 +142,9 @@ class CarteController extends Controller
             $em = $this->getDoctrine()->getManager();
             $extension->setCreateur($this->getUser());
             $extension->setDate(new \DateTime());
+            $note = new Note();
+            $em->persist($note);
+            $extension->setNote($note);
             $em->persist($extension);
             $em->flush();
             return $this->redirect($this->generateUrl('liste_extension_perso',array()));
@@ -142,10 +156,8 @@ class CarteController extends Controller
 
     public function affichageListeCartesAction()
     {
-        $repository = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('CarteBundle:Carte');
-        $cartes = $repository->findAll();
+        $cartes = $this->getDoctrine()->getRepository('CarteBundle:Carte')->findAll();
+
         return $this->render('CarteBundle:Affichages:liste_cartes.html.twig', array(
             'cartes' => $cartes
         ));

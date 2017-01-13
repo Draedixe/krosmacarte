@@ -48,6 +48,12 @@ class Extension
      */
     private $createur;
 
+    /**
+     * @ORM\OneToOne(targetEntity="CarteBundle\Entity\Note")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $note;
+
     public function __construct()
     {
         $this->cartes = new ArrayCollection();
@@ -135,5 +141,19 @@ class Extension
         $this->date = $date;
     }
 
+    /**
+     * @return Note
+     */
+    public function getNote()
+    {
+        return $this->note;
+    }
 
+    /**
+     * @param Note $note
+     */
+    public function setNote(Note $note)
+    {
+        $this->note = $note;
+    }
 }

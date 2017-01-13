@@ -11,15 +11,15 @@
 
     <ul>
         {% for extension in extensions %}
-            <fieldset>
-                <legend><a href="{{ path('affichage_extension', { 'idExt': extension.id }) }}">{{ extension.nom }}</a></legend>
+            <p>
+                <a href="{{ path('affichage_extension', { 'idExt': extension.id }) }}">{{ extension.nom }}</a>
                 Créée par {{ extension.createur }} le {{ extension.date | date('d/m/Y H:i:s') }}<br/>
                 {{ extension.cartes|length }} cartes<br/>
                 {% if app.user == extension.createur %}
                     <a role="button" class="btn btn-success" href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte</a>
                     <a role="button" class="btn btn-danger" href="{{ path('supprimer_extension', { 'idExt': extension.id }) }}">Supprimer</a>
                 {% endif %}
-            </fieldset>
+            </p>
 
         {% endfor %}
     </ul>

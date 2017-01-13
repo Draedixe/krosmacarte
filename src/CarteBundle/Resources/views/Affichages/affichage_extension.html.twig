@@ -10,7 +10,7 @@
     Créée le {{ extension.date | date('d/m/Y H:i:s') }}
     <ul>
         {% for carte in extension.cartes %}
-            <fieldset>
+            <!<fieldset>
                 <legend>{{ carte.nom }}</legend>
                 Cout :{{ carte.cout }}PA<br/>
                 Dieu :{{ carte.dieu.nom }}<br/>
@@ -26,7 +26,8 @@
                 {% if app.user == extension.createur %}
                     <a role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
                 {% endif %}
-            </fieldset>
+
+            </fieldset>-
         {% endfor %}
     </ul>
     {% if app.user == extension.createur %}

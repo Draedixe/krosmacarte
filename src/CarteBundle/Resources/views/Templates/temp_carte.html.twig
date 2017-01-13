@@ -1,0 +1,63 @@
+<img id="image{{ carte.id }}" src="{{ carte.image }}" hidden/>
+<img id="fond{{ carte.id }}" src="{{ asset('images/' ~ carte.dieu.nom | lower ~ "_" ~ ((carte.creature == null) ? 'sort' : 'crea') ~".png" )}}" hidden/>
+<canvas id="canvas_carte{{ carte.id }}" width="250" height="317">
+    Votre navigateur n'affiche pas les canvas.
+</canvas>
+
+<script type="text/javascript">
+
+    var c{{ carte.id }} = document.getElementById("canvas_carte{{ carte.id }}");
+    var ctx{{ carte.id }} = c{{ carte.id }}.getContext("2d");
+    var imageA{{ carte.id }} = document.getElementById("image{{ carte.id }}");
+
+    imageA{{ carte.id }}.onload = function() {
+
+        ctx{{ carte.id }}.save();
+        ctx{{ carte.id }}.beginPath();
+        ctx{{ carte.id }}.arc(128, 110, 100, 0, Math.PI * 2, true);
+        ctx{{ carte.id }}.closePath();
+        ctx{{ carte.id }}.clip();
+        ctx{{ carte.id }}.drawImage(this,37,36,184,135);
+
+        ctx{{ carte.id }}.beginPath();
+        ctx{{ carte.id }}.arc(0, 0, 100, 0, Math.PI * 2, true);
+        ctx{{ carte.id }}.clip();
+        ctx{{ carte.id }}.closePath();
+        ctx{{ carte.id }}.restore();
+    };
+
+    var image{{ carte.id }} = document.getElementById("fond{{ carte.id }}");
+
+    image{{ carte.id }}.onload = function() {
+
+        ctx{{ carte.id }}.drawImage(this,0,0,250,317);
+        // PA
+        ctx{{ carte.id }}.fillStyle="#ffffff";
+        ctx{{ carte.id }}.font="50px Verdana ";
+        {% if carte.cout < 10 %}
+            {% set xPA = 25 %}
+        {% else %}
+            {% set xPA = 10 %}
+        {% endif %}
+        ctx{{ carte.id }}.fillText('{{ carte.cout }}', {{ xPA }}, 65)
+        ctx{{ carte.id }}.strokeStyle="#03859C";
+        ctx{{ carte.id }}.lineWidth= 2;
+        ctx{{ carte.id }}.strokeText('{{ carte.cout }}',{{ xPA }},65);
+
+
+        // NOM
+        ctx{{ carte.id }}.fillStyle="#ffffff";
+        ctx{{ carte.id }}.font="18px Verdana ";
+        ctx{{ carte.id }}.fillText('{{ carte.nom }}', 39, 195)
+
+        // POUVOIR
+        ctx{{ carte.id }}.fillStyle="#000000";
+        ctx{{ carte.id }}.font="16px Verdana ";
+        ctx{{ carte.id }}.fillText('{{ carte.pouvoir }}', 42, 230)
+        /*ctx.fillText('Défonce des fesses', 42, 250)
+        ctx.fillText('Défonce des fesses', 42, 270)
+        ctx.fillText('Défonce des fesses', 42, 290)*/
+    };
+
+
+</script>

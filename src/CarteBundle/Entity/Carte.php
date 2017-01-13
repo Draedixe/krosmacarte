@@ -75,6 +75,12 @@ class Carte
     private $date;
 
     /**
+     * @ORM\OneToOne(targetEntity="CarteBundle\Entity\Note")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $note;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -239,6 +245,74 @@ class Carte
     public function setDate($date)
     {
         $this->date = $date;
+    }
+    /**
+     * @return Note
+     */
+    public function getNote()
+    {
+        return $this->note;
+    }
+
+    /**
+     * @param Note $note
+     */
+    public function setNote(Note $note)
+    {
+        $this->note = $note;
+    }
+
+    public function resizePng($im, $dst_width, $dst_height) {
+        $width = imagesx($im);
+        $height = imagesy($im);
+
+        $newImg = imagecreatetruecolor($dst_width, $dst_height);
+
+        imagealphablending($newImg, false);
+        imagesavealpha($newImg, true);
+        $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
+        imagefilledrectangle($newImg, 0, 0, $width, $height, $transparent);
+        imagecopyresampled($newImg, $im, 0, 0, 0, 0, $dst_width, $dst_height, $width, $height);
+
+        return $newImg;
+    }
+
+    public function genererCartePNG($urlImg, $urlCreations,$urlFont)
+    {
+
+        $imageTot = imagecreatetruecolor(250,317);
+        $transparent = imagecolorallocatealpha($imageTot, 255, 255, 255, 127);
+        imagefill($imageTot, 0, 0, $transparent);
+        imagealphablending($imageTot, true);
+
+        $imageCarte = imagecreatefrompng($this->getImage());
+        $imageCarte = $this->resizePng($imageCarte,184,135);
+
+        imagecopy($imageTot, $imageCarte, 37, 36, 0, 0, 184, 135);
+
+        $imageFond = imagecreatefrompng($urlImg.strtolower($this->getDieu()->getNom())."_".(($this->getCreature() == null) ? 'sort' : 'crea').".png");
+        $imageFond = $this->resizePng($imageFond,250,317);
+        imagecopy($imageTot, $imageFond, 0, 0, 0, 0, 250, 317);
+
+
+        imagealphablending($imageTot, false);
+        imagesavealpha($imageTot, true);
+        $blanc = imagecolorallocate($imageCarte, 255, 255, 255);
+        $noir = imagecolorallocate($imageCarte, 0, 0, 0);
+        imagestring($imageTot, 5, 42, 180, $this->getNom(), $blanc);
+        imagestring($imageTot, 5, 33, 30, $this->getCout(), $blanc);
+        //imagettftext ( $imageTot, 50 , 0 , 33 , 30, $blanc , $urlFont."/Prototype.ttf" , $this->getCout() );
+        imagestring($imageTot, 5, 42, 214, $this->getPouvoir(), $noir);
+        $creatureCarte = $this->getCreature();
+        if($creatureCarte != null){
+            imagestring($imageTot, 5, 177, 38, $creatureCarte->getAtk(), $blanc);
+            imagestring($imageTot, 5, 211, 38, $creatureCarte->getPdv(), $blanc);
+            imagestring($imageTot, 5, 196, 65, $creatureCarte->getPm(), $blanc);
+            imagestring($imageTot, 5, 60, 297,  $creatureCarte->getClasse(), $blanc);
+
+        }
+
+        imagepng($imageTot, $urlCreations."carte_".$this->getId().".png");
     }
 
 }

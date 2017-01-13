@@ -48,3 +48,6 @@ valider_carte:
     requirements:
       _method: POST
 
+homepage:
+    path:     /
+    defaults: { _controller: FOSUserBundle:Security:login }
