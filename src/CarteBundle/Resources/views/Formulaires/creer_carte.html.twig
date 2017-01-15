@@ -23,10 +23,8 @@
                     $("#formNonInf").hide();
                 }
                 else{
-                    alert($('.radioType').val());
-                    if($('.radioType').val() === "sort"){
-                        $("#formCrea").hide();
-                    }
+                    $("#radioSort").prop("checked", true);
+                    $("#formCrea").hide();
                     $("#formInfinite").hide();
                     $("#formNonInf").show();
                 }
@@ -39,7 +37,8 @@
     <form id="formCreation" action="{{ path('valider_carte') }}" method="post" >
         <label for="nom">Nom de la carte :</label><input type="text" name="nom"/><br/>
         <label for="cout">Cout de la carte :</label><input type="number" name="cout"/><br/>
-        <label for="pouvoir">Pouvoir de la carte :</label><input type="text" name="pouvoir"/><br/>
+        <label for="pouvoir">Pouvoir de la carte (attention, 4 lignes max et 28 caractères par lignes seulement) :</label><br/>
+        <textarea name="pouvoir" rows="4" cols="28"></textarea><br/>
         <label for="image">Image de la carte :</label><input type="text" name="image"/><br/>
         <label for="dieu">Dieu associé :</label>
         <select name="dieu" id="dieu">
@@ -55,8 +54,8 @@
                 {% endfor %}
             </select><br/>
             <label for="niveau">Type de carte :</label>
-            <input class="radioType" type="radio" name="type" value="sort" checked> Sort
-            <input class="radioType" type="radio" name="type" value="crea"> Créature<br>
+            <input class="radioType" id="radioSort" type="radio" name="type" value="sort" checked> Sort
+            <input class="radioType" id="radioCrea" type="radio" name="type" value="crea"> Créature<br>
         </div>
         <div id="formInfinite" hidden>
             <label for="niveau">Niveau de l'infinite :</label>

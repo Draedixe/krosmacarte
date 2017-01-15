@@ -30,7 +30,7 @@ class InitialisationCommand extends ContainerAwareCommand
         $em = $this->getContainer()->get('doctrine')->getManager();
         $output->writeln("Creation des Dieux");
 
-        $newDieux = new SplFixedArray(9);
+        $newDieux = new SplFixedArray(10);
         $newDieux[0] = new Dieu();
         $newDieux[0]->setNom("Iop");
         $newDieux[1] = new Dieu();
@@ -49,6 +49,8 @@ class InitialisationCommand extends ContainerAwareCommand
         $newDieux[7]->setNom("Sadida");
         $newDieux[8] = new Dieu();
         $newDieux[8]->setNom("Infinite");
+        $newDieux[9] = new Dieu();
+        $newDieux[9]->setNom("Neutre");
         foreach($newDieux as $dieu)
         {
             $em->persist($dieu);

@@ -8,28 +8,21 @@
 
     <h2>{{ extension.nom }}</h2>
     Créée le {{ extension.date | date('d/m/Y H:i:s') }}
-    <ul>
-        {% for carte in extension.cartes %}
-            <!<fieldset>
-                <legend>{{ carte.nom }}</legend>
-                Cout :{{ carte.cout }}PA<br/>
-                Dieu :{{ carte.dieu.nom }}<br/>
-                {% if not carte.creature is null %}
-                    PM : {{ carte.creature.pm }}
-                    Atk : {{ carte.creature.atk }}
-                    Pdv : {{ carte.creature.pdv }}<br/>
-                    Classe : {{ carte.creature.classe }}<br/>
-                {% endif %}
-                Pouvoir : {{ carte.pouvoir }}<br/>
+    <div class="row">
+    {% for carte in extension.cartes %}
+        {% if loop.index0%6 == 0 %}
+            </div>
+            <div class="row">
+        {% endif %}
+        <div class="col-md-2">
+            <img src="{{ asset('creations/carte_'~carte.id~".png") }}" alt="" /><br/>
 
-
-                {% if app.user == extension.createur %}
-                    <a role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
-                {% endif %}
-
-            </fieldset>-
-        {% endfor %}
-    </ul>
+            {% if app.user == extension.createur %}
+                <a style="margin-left: auto;margin-right: auto;" role="button" class="btn btn-danger" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
     {% if app.user == extension.createur %}
         <a role="button" class="btn btn-success" href="{{ path('creation_carte_ext', { 'idExt': extension.id }) }}">Ajouter une carte</a>
     {% endif %}

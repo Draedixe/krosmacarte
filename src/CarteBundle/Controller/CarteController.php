@@ -14,6 +14,7 @@ use CarteBundle\Form\CarteType;
 use CarteBundle\Entity\Carte;
 use CarteBundle\Entity\Extension;
 use Doctrine\ORM\EntityRepository;
+use SplFileInfo;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -78,69 +79,73 @@ class CarteController extends Controller
         $extensionN = $request->get("extension");
         $type = $request->get("type");
 
-        $repositoryE = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('CarteBundle:Extension');
-        $repositoryD = $this->getDoctrine()
-            ->getManager()
-            ->getRepository('CarteBundle:Dieu');
-        if(strcmp ($dieu,"Infinite") != 0){
-            $repositoryR = $this->getDoctrine()
+        $info = new SplFileInfo($image);
+        if(strcmp ($info->getExtension(),"png") == 0 || strcmp ($info->getExtension(),"jpeg") == 0){
+            $repositoryE = $this->getDoctrine()
                 ->getManager()
-                ->getRepository('CarteBundle:Rarete');
-            $rarete = $repositoryR->findOneBy(array('nom' => $rarete));
-            $carte->setRarete($rarete);
-        }else{
-            $type = $request->get("niveau");
-        }
-        $extension = $repositoryE->find(substr($extensionN,10));
-        $dieu = $repositoryD->findOneBy(array('nom' => $dieu));
+                ->getRepository('CarteBundle:Extension');
+            $repositoryD = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('CarteBundle:Dieu');
+            if(strcmp ($dieu,"Infinite") != 0){
+                $repositoryR = $this->getDoctrine()
+                    ->getManager()
+                    ->getRepository('CarteBundle:Rarete');
+                $rarete = $repositoryR->findOneBy(array('nom' => $rarete));
+                $carte->setRarete($rarete);
+            }else{
+                $type = $request->get("niveau");
+            }
+            $extension = $repositoryE->find(substr($extensionN,10));
+            $dieu = $repositoryD->findOneBy(array('nom' => $dieu));
 
 
-        if($nom != null && $cout != null && $dieu != null && $pouvoir != null && $image != null && $extension != null)
-        {
-            if($extension->getCreateur() == $this->getUser()){
-                $carte->setNom($nom);
-                $carte->setCout($cout);
-                $carte->setDieu($dieu);
-                $carte->setPouvoir($pouvoir);
-                $carte->setImage($image);
-                $carte->setExtension($extension);
-                $carte->setDate(new \DateTime());
-                $note = new Note();
-                $em = $this->getDoctrine()->getManager();
-                if($type != null){
-                    if(strcmp ($type,"crea") == 0 || is_numeric($type)){
-                        $creature = new Creature();
-                        $atk = $request->get("atk");
-                        $pm = $request->get("pm");
-                        $pdv = $request->get("pdv");
-                        $classe = $request->get("classe");
-                        if($atk != null && $pm != null && $pdv != null && $classe != null)
-                        {
-                            $creature->setAtk($atk);
-                            $creature->setPm($pm);
-                            $creature->setPdv($pdv);
-                            $creature->setClasse($classe);
-                            $em->persist($creature);
-                            $carte->setCreature($creature);
+            if($nom != null && $cout != null && $dieu != null && $pouvoir != null && $image != null && $extension != null)
+            {
+                if($extension->getCreateur() == $this->getUser()){
+                    $carte->setNom(substr($nom,0,18));
+                    $carte->setCout($cout);
+                    $carte->setDieu($dieu);
+                    $carte->setPouvoir($pouvoir);
+                    $carte->setImage($image);
+                    $carte->setExtension($extension);
+                    $carte->setDate(new \DateTime());
+                    $note = new Note();
+                    $em = $this->getDoctrine()->getManager();
+                    if($type != null){
+                        if(strcmp ($type,"crea") == 0 || is_numeric($type)){
+                            $creature = new Creature();
+                            $atk = $request->get("atk");
+                            $pm = $request->get("pm");
+                            $pdv = $request->get("pdv");
+                            $classe = $request->get("classe");
+                            if($atk != null && $pm != null && $pdv != null && $classe != null)
+                            {
+                                $creature->setAtk($atk);
+                                $creature->setPm($pm);
+                                $creature->setPdv($pdv);
+                                $creature->setClasse(substr($classe,0,24));
+                                $em->persist($creature);
+                                $carte->setCreature($creature);
+                            }
+
                         }
-
                     }
+
+                    $em->persist($note);
+                    $carte->setNote($note);
+                    $em->persist($carte);
+                    $em->flush();
+
+                    $imagesDir = $this->get('kernel')->getRootDir() . '/../web/images/';
+                    $creationDir = $this->get('kernel')->getRootDir() . '/../web/creations/';
+                    $urlFont = $this->get('kernel')->getRootDir() . '/../web/fonts/';
+                    $carte->genererCartePNG($imagesDir,$creationDir,$urlFont,$type);
+
+
+                    return $this->redirect($this->generateUrl('affichage_extension',array('idExt' => $extension->getId())));
                 }
 
-                $em->persist($note);
-                $carte->setNote($note);
-                $em->persist($carte);
-                $em->flush();
-
-                $imagesDir = $this->get('kernel')->getRootDir() . '/../web/images/';
-                $creationDir = $this->get('kernel')->getRootDir() . '/../web/creations/';
-                $urlFont = $this->get('kernel')->getRootDir() . '/../web/fonts/';
-                $carte->genererCartePNG($imagesDir,$creationDir,$urlFont,$type);
-
-
-                return $this->redirect($this->generateUrl('affichage_extension',array('idExt' => $extension->getId())));
             }
 
         }

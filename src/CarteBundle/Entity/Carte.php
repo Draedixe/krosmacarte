@@ -3,6 +3,7 @@
 namespace CarteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use SplFileInfo;
 
 /**
  * Carte
@@ -308,9 +309,15 @@ class Carte
         imagefill($imageTot, 0, 0, $transparent);
         imagealphablending($imageTot, true);
 
-        $imageCarte = imagecreatefrompng($this->getImage());
-        $imageCarte = $this->resizePng($imageCarte,184,135);
+        $info = new SplFileInfo($this->getImage());
+        if(strcmp ($info->getExtension(),"png") == 0){
+            $imageCarte = imagecreatefrompng($this->getImage());
+        }
+        else if(strcmp ($info->getExtension(),"jpeg") == 0){
+            $imageCarte = imagecreatefromjpeg($this->getImage());
+        }
 
+        $imageCarte = $this->resizePng($imageCarte,184,135);
         imagecopy($imageTot, $imageCarte, 37, 36, 0, 0, 184, 135);
         $imageFond = imagecreatefrompng($urlImg.strtolower($this->getDieu()->getNom())."_".$type.".png");
         $imageFond = $this->resizePng($imageFond,250,317);
@@ -322,19 +329,19 @@ class Carte
         $blanc = imagecolorallocate($imageCarte, 255, 255, 255);
         $noir = imagecolorallocate($imageCarte, 0, 0, 0);
         imagealphablending($imageTot, true);
-        imagettftext ( $imageTot, 15 , 0 , 42 , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
+        imagettftext ( $imageTot, 15 , 0 ,(((144-(strlen($this->getNom())*8))/2)+42)  , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
         if($this->getCout() < 10){
             imagettftext ( $imageTot, 30 , 0 , 33 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
         }else{
             imagettftext ( $imageTot, 30 , 0 , 23 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
         }
-        imagettftext ( $imageTot, 15 , 0 , 42 , 225, $noir , $urlFont."/BERNHC.ttf" , $this->getPouvoir() );
+        imagettftext ( $imageTot, 12 , 0 , 38 , 225, $noir , $urlFont."/BERNHC.ttf" , $this->getPouvoir() );
         $creatureCarte = $this->getCreature();
         if($creatureCarte != null){
             imagettftext ( $imageTot, 15 , 0 , 177 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getAtk() );
             imagettftext ( $imageTot, 15 , 0 , 211 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPdv() );
             imagettftext ( $imageTot, 15 , 0 , 196 , 75, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPm() );
-            imagettftext ( $imageTot, 10 , 0 , 60 , 307, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getClasse() );
+            imagettftext ( $imageTot, 10 , 0 , (((144-(strlen($creatureCarte->getClasse())*6))/2)+60) , 307, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getClasse() );
 
         }
         imagealphablending($imageTot, false);
