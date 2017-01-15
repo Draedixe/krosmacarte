@@ -68,6 +68,12 @@ class Carte
     private $dieu;
 
     /**
+     * @ORM\ManyToOne(targetEntity="CarteBundle\Entity\Rarete")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $rarete;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
@@ -207,12 +213,29 @@ class Carte
 
         return $this;
     }
+
     /**
      * @return Dieu
      */
     public function getDieu()
     {
         return $this->dieu;
+    }
+
+    /**
+     * @param Rarete $rarete
+     */
+    public function setRarete(Rarete $rarete)
+    {
+        $this->rarete = $rarete;
+    }
+
+    /**
+     * @return Rarete
+     */
+    public function getRarete()
+    {
+        return $this->rarete;
     }
 
     /**
@@ -277,7 +300,7 @@ class Carte
         return $newImg;
     }
 
-    public function genererCartePNG($urlImg, $urlCreations,$urlFont)
+    public function genererCartePNG($urlImg, $urlCreations,$urlFont,$type)
     {
 
         $imageTot = imagecreatetruecolor(250,317);
@@ -289,8 +312,7 @@ class Carte
         $imageCarte = $this->resizePng($imageCarte,184,135);
 
         imagecopy($imageTot, $imageCarte, 37, 36, 0, 0, 184, 135);
-
-        $imageFond = imagecreatefrompng($urlImg.strtolower($this->getDieu()->getNom())."_".(($this->getCreature() == null) ? 'sort' : 'crea').".png");
+        $imageFond = imagecreatefrompng($urlImg.strtolower($this->getDieu()->getNom())."_".$type.".png");
         $imageFond = $this->resizePng($imageFond,250,317);
         imagecopy($imageTot, $imageFond, 0, 0, 0, 0, 250, 317);
 
@@ -299,18 +321,23 @@ class Carte
         imagesavealpha($imageTot, true);
         $blanc = imagecolorallocate($imageCarte, 255, 255, 255);
         $noir = imagecolorallocate($imageCarte, 0, 0, 0);
-        imagestring($imageTot, 5, 42, 180, $this->getNom(), $blanc);
-        imagestring($imageTot, 5, 33, 30, $this->getCout(), $blanc);
-        //imagettftext ( $imageTot, 50 , 0 , 33 , 30, $blanc , $urlFont."/Prototype.ttf" , $this->getCout() );
-        imagestring($imageTot, 5, 42, 214, $this->getPouvoir(), $noir);
+        imagealphablending($imageTot, true);
+        imagettftext ( $imageTot, 15 , 0 , 42 , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
+        if($this->getCout() < 10){
+            imagettftext ( $imageTot, 30 , 0 , 33 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
+        }else{
+            imagettftext ( $imageTot, 30 , 0 , 23 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
+        }
+        imagettftext ( $imageTot, 15 , 0 , 42 , 225, $noir , $urlFont."/BERNHC.ttf" , $this->getPouvoir() );
         $creatureCarte = $this->getCreature();
         if($creatureCarte != null){
-            imagestring($imageTot, 5, 177, 38, $creatureCarte->getAtk(), $blanc);
-            imagestring($imageTot, 5, 211, 38, $creatureCarte->getPdv(), $blanc);
-            imagestring($imageTot, 5, 196, 65, $creatureCarte->getPm(), $blanc);
-            imagestring($imageTot, 5, 60, 297,  $creatureCarte->getClasse(), $blanc);
+            imagettftext ( $imageTot, 15 , 0 , 177 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getAtk() );
+            imagettftext ( $imageTot, 15 , 0 , 211 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPdv() );
+            imagettftext ( $imageTot, 15 , 0 , 196 , 75, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPm() );
+            imagettftext ( $imageTot, 10 , 0 , 60 , 307, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getClasse() );
 
         }
+        imagealphablending($imageTot, false);
 
         imagepng($imageTot, $urlCreations."carte_".$this->getId().".png");
     }

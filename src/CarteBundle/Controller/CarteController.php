@@ -28,12 +28,17 @@ class CarteController extends Controller
         $repositoryD = $this->getDoctrine()
             ->getManager()
             ->getRepository('CarteBundle:Dieu');
+        $repositoryR = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Rarete');
 
         $extensions = $repositoryE->findBy(array('createur' => $this->getUser()));
         $dieux = $repositoryD->findAll();
+        $raretes = $repositoryR->findAll();
         return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
             'dieux' => $dieux,
             'extensions' => $extensions,
+            'raretes' => $raretes,
         ));
     }
 
@@ -47,10 +52,15 @@ class CarteController extends Controller
         $repositoryD = $this->getDoctrine()
             ->getManager()
             ->getRepository('CarteBundle:Dieu');
+        $repositoryR = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Rarete');
         $dieux = $repositoryD->findAll();
+        $raretes = $repositoryR->findAll();
         return $this->render('CarteBundle:Formulaires:creer_carte.html.twig', array(
             'dieux' => $dieux,
             'extension' => $extension,
+            'raretes' => $raretes,
         ));
     }
 
@@ -64,6 +74,7 @@ class CarteController extends Controller
         $dieu = $request->get("dieu");
         $pouvoir = $request->get("pouvoir");
         $image = $request->get("image");
+        $rarete = $request->get("rarete");
         $extensionN = $request->get("extension");
         $type = $request->get("type");
 
@@ -73,6 +84,15 @@ class CarteController extends Controller
         $repositoryD = $this->getDoctrine()
             ->getManager()
             ->getRepository('CarteBundle:Dieu');
+        if(strcmp ($dieu,"Infinite") != 0){
+            $repositoryR = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('CarteBundle:Rarete');
+            $rarete = $repositoryR->findOneBy(array('nom' => $rarete));
+            $carte->setRarete($rarete);
+        }else{
+            $type = $request->get("niveau");
+        }
         $extension = $repositoryE->find(substr($extensionN,10));
         $dieu = $repositoryD->findOneBy(array('nom' => $dieu));
 
@@ -90,7 +110,7 @@ class CarteController extends Controller
                 $note = new Note();
                 $em = $this->getDoctrine()->getManager();
                 if($type != null){
-                    if(strcmp ($type,"crea") == 0){
+                    if(strcmp ($type,"crea") == 0 || is_numeric($type)){
                         $creature = new Creature();
                         $atk = $request->get("atk");
                         $pm = $request->get("pm");
@@ -117,7 +137,7 @@ class CarteController extends Controller
                 $imagesDir = $this->get('kernel')->getRootDir() . '/../web/images/';
                 $creationDir = $this->get('kernel')->getRootDir() . '/../web/creations/';
                 $urlFont = $this->get('kernel')->getRootDir() . '/../web/fonts/';
-                $carte->genererCartePNG($imagesDir,$creationDir,$urlFont);
+                $carte->genererCartePNG($imagesDir,$creationDir,$urlFont,$type);
 
 
                 return $this->redirect($this->generateUrl('affichage_extension',array('idExt' => $extension->getId())));

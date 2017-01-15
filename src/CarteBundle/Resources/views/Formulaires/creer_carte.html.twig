@@ -15,7 +15,22 @@
                         $("#formCrea").hide();
                         break;
                 }
-            })
+            });
+            $('#dieu').change(function () {
+                if($(this).val() === "Infinite") {
+                    $("#formInfinite").show();
+                    $("#formCrea").show();
+                    $("#formNonInf").hide();
+                }
+                else{
+                    alert($('.radioType').val());
+                    if($('.radioType').val() === "sort"){
+                        $("#formCrea").hide();
+                    }
+                    $("#formInfinite").hide();
+                    $("#formNonInf").show();
+                }
+            });
         });
 
     </script>
@@ -32,10 +47,23 @@
                 <option id="{{ dieu.nom }}">{{ dieu.nom }}</option>
             {% endfor %}
         </select><br/>
-
-        <input class="radioType" type="radio" name="type" value="sort" checked> Sort
-        <input class="radioType" type="radio" name="type" value="crea"> Créature<br>
-
+        <div id="formNonInf">
+            <label for="rarete">Rareté :</label>
+            <select name="rarete" id="rarete">
+                {% for rarete in raretes %}
+                    <option id="{{ rarete.nom }}">{{ rarete.nom }}</option>
+                {% endfor %}
+            </select><br/>
+            <label for="niveau">Type de carte :</label>
+            <input class="radioType" type="radio" name="type" value="sort" checked> Sort
+            <input class="radioType" type="radio" name="type" value="crea"> Créature<br>
+        </div>
+        <div id="formInfinite" hidden>
+            <label for="niveau">Niveau de l'infinite :</label>
+            <input class="radioNiveau" type="radio" name="niveau" value="1" checked> 1
+            <input class="radioNiveau" type="radio" name="niveau" value="2"> 2
+            <input class="radioNiveau" type="radio" name="niveau" value="3"> 3<br>
+        </div>
         <div id="formCrea" hidden>
             <label for="pdv">Pdv de la créature :</label><input type="number" name="pdv"/><br/>
             <label for="atk">Atk de la créature :</label><input type="number" name="atk"/><br/>

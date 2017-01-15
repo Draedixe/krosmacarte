@@ -29,14 +29,6 @@ class Rarete
     private $nom;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="symbole", type="string", length=255)
-     */
-    private $symbole;
-
-
-    /**
      * Get id
      *
      * @return integer 
@@ -67,28 +59,5 @@ class Rarete
     public function getNom()
     {
         return $this->nom;
-    }
-
-    /**
-     * Set symbole
-     *
-     * @param string $symbole
-     * @return rarete
-     */
-    public function setSymbole($symbole)
-    {
-        $this->symbole = $symbole;
-
-        return $this;
-    }
-
-    /**
-     * Get symbole
-     *
-     * @return string 
-     */
-    public function getSymbole()
-    {
-        return $this->symbole;
     }
 }
