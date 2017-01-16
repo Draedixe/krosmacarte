@@ -80,7 +80,7 @@ class CarteController extends Controller
         $type = $request->get("type");
 
         $info = new SplFileInfo($image);
-        if(strcmp ($info->getExtension(),"png") == 0 || strcmp ($info->getExtension(),"jpeg") == 0){
+        if(strcmp ($info->getExtension(),"png") == 0 || strcmp ($info->getExtension(),"jpeg") == 0 || strcmp ($info->getExtension(),"jpg") == 0){
             $repositoryE = $this->getDoctrine()
                 ->getManager()
                 ->getRepository('CarteBundle:Extension');
@@ -110,7 +110,6 @@ class CarteController extends Controller
                     $carte->setImage($image);
                     $carte->setExtension($extension);
                     $carte->setDate(new \DateTime());
-                    $note = new Note();
                     $em = $this->getDoctrine()->getManager();
                     if($type != null){
                         if(strcmp ($type,"crea") == 0 || is_numeric($type)){
@@ -132,8 +131,6 @@ class CarteController extends Controller
                         }
                     }
 
-                    $em->persist($note);
-                    $carte->setNote($note);
                     $em->persist($carte);
                     $em->flush();
 
@@ -151,6 +148,22 @@ class CarteController extends Controller
         }
         return $this->redirect($this->generateUrl('creation_carte',array()));
 
+    }
+    public function voterCarteAction($idCarte){
+        $repository = $this->getDoctrine()
+            ->getManager()
+            ->getRepository('CarteBundle:Carte');
+        $carte = $repository->find($idCarte);
+
+        if($carte->getExisteVote($this->getUser())){
+            $carte->removeVote($this->getUser());
+        }else{
+            $carte->addVote($this->getUser());
+        }
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($carte);
+        $em->flush();
+        return $this->redirect($this->generateUrl('affichage_extension', array('idExt' => $carte->getExtension()->getId())));
     }
 
     public function creationExtensionAction()

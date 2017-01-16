@@ -28,7 +28,7 @@ class InitialisationCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $output->writeln("Creation des Dieux");
+        $output->writeln("===== Creation des Dieux =====");
 
         $newDieux = new SplFixedArray(10);
         $newDieux[0] = new Dieu();
@@ -54,9 +54,9 @@ class InitialisationCommand extends ContainerAwareCommand
         foreach($newDieux as $dieu)
         {
             $em->persist($dieu);
-            $output->write(".");
+            $output->writeln($dieu->getNom()." ajoute");
         }
-        $output->writeln("Creation des Raretes");
+        $output->writeln("===== Creation des Raretes =====");
         $newRarete = new SplFixedArray(4);
         $newRarete[0] = new Rarete();
         $newRarete[0]->setNom("Commune");
@@ -69,7 +69,7 @@ class InitialisationCommand extends ContainerAwareCommand
         foreach($newRarete as $rarete)
         {
             $em->persist($rarete);
-            $output->write(".");
+            $output->writeln($rarete->getNom()." ajoute");
         }
         $em->flush();
 

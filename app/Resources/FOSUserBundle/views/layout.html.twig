@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8" />
 
-    {% stylesheets 'css/*'  %}
-        <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
-    {% endstylesheets %}
-    {% javascripts 'js/jquery-3.1.1.min.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-    {% javascripts 'js/bootstrap.min.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+
+    <link rel="stylesheet" href="{{ asset("css/bootstrap.css") }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset("css/bootstrap-theme.css") }}" type="text/css" />
+
+    <script type="text/javascript" src="{{ asset("js/jquery-3.1.1.min.js") }}"></script>
+    <script type="text/javascript" src="{{ asset("js/bootstrap.min.js") }}"></script>
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>

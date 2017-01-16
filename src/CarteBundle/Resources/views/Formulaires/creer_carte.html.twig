@@ -35,7 +35,7 @@
     <h3>Création d'une carte</h3>
 
     <form id="formCreation" action="{{ path('valider_carte') }}" method="post" >
-        <label for="nom">Nom de la carte :</label><input type="text" name="nom"/><br/>
+        <label for="nom">Nom de la carte (18 caractères max) :</label><input type="text" name="nom"/><br/>
         <label for="cout">Cout de la carte :</label><input type="number" name="cout"/><br/>
         <label for="pouvoir">Pouvoir de la carte (attention, 4 lignes max et 28 caractères par lignes seulement) :</label><br/>
         <textarea name="pouvoir" rows="4" cols="28"></textarea><br/>
@@ -67,7 +67,7 @@
             <label for="pdv">Pdv de la créature :</label><input type="number" name="pdv"/><br/>
             <label for="atk">Atk de la créature :</label><input type="number" name="atk"/><br/>
             <label for="pm">PM de la créature :</label><input type="number" name="pm"/><br/>
-            <label for="classe">Classe de la créature :</label><input type="text" name="classe"/><br/>
+            <label for="classe">Classe de la créature (24 caractères max) :</label><input type="text" name="classe"/><br/>
         </div>
 
         <label for="extension">Extension :</label>

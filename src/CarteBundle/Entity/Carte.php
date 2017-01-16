@@ -2,8 +2,10 @@
 
 namespace CarteBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use SplFileInfo;
+use UserBundle\Entity\User;
 
 /**
  * Carte
@@ -82,10 +84,15 @@ class Carte
     private $date;
 
     /**
-     * @ORM\OneToOne(targetEntity="CarteBundle\Entity\Note")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\ManyToMany(targetEntity="UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinTable(name="votes_cartes")
      */
-    private $note;
+    private $votes;
+
+    public function __construct()
+    {
+        $this->votes = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -270,20 +277,36 @@ class Carte
     {
         $this->date = $date;
     }
+
     /**
-     * @return Note
+     * @param User $user
      */
-    public function getNote()
+    public function addVote(User $user)
     {
-        return $this->note;
+        $this->votes[] = $user;
     }
 
     /**
-     * @param Note $note
+     * @param User $user
      */
-    public function setNote(Note $note)
+    public function removeVote(User $user)
     {
-        $this->note = $note;
+        $this->votes->removeElement($user);
+    }
+
+    public function getExisteVote(User $user)
+    {
+        return $this->votes->contains($user);
+    }
+
+    /**
+     * Get votes
+     *
+     * @return ArrayCollection
+     */
+    public function getVotes()
+    {
+        return $this->votes;
     }
 
     public function resizePng($im, $dst_width, $dst_height) {
@@ -301,6 +324,13 @@ class Carte
         return $newImg;
     }
 
+    function imagettfstroketext(&$image, $size, $angle, $x, $y, &$textcolor, &$strokecolor, $fontfile, $text, $px) {
+        for($c1 = ($x-abs($px)); $c1 <= ($x+abs($px)); $c1++)
+            for($c2 = ($y-abs($px)); $c2 <= ($y+abs($px)); $c2++)
+                $bg = imagettftext($image, $size, $angle, $c1, $c2, $strokecolor, $fontfile, $text);
+        return imagettftext($image, $size, $angle, $x, $y, $textcolor, $fontfile, $text);
+    }
+
     public function genererCartePNG($urlImg, $urlCreations,$urlFont,$type)
     {
 
@@ -313,7 +343,7 @@ class Carte
         if(strcmp ($info->getExtension(),"png") == 0){
             $imageCarte = imagecreatefrompng($this->getImage());
         }
-        else if(strcmp ($info->getExtension(),"jpeg") == 0){
+        else if(strcmp ($info->getExtension(),"jpeg") == 0 || strcmp ($info->getExtension(),"jpg") == 0){
             $imageCarte = imagecreatefromjpeg($this->getImage());
         }
 
@@ -323,24 +353,40 @@ class Carte
         $imageFond = $this->resizePng($imageFond,250,317);
         imagecopy($imageTot, $imageFond, 0, 0, 0, 0, 250, 317);
 
+        if($this->getRarete() != null){
+            if(! strcmp($this->getRarete()->getNom(),"Commune") == 0){
+                $imageRareteUrl = $urlImg.str_replace(" ","_",strtolower($this->getRarete()->getNom())).".png";
+                $imageRarete = imagecreatefrompng($imageRareteUrl);
+                list($width, $height, $type, $attr) = getimagesize($imageRareteUrl);
+                if(! strcmp($this->getRarete()->getNom(),"Krosmique") == 0) {
+                    imagecopy($imageTot, $imageRarete, 107, 43 - $height, 0, 0, $width, $height);
+                }else{
+                    imagecopy($imageTot, $imageRarete, 111, 43 - $height, 0, 0, $width, $height);
+                }
+            }
+        }
 
         imagealphablending($imageTot, false);
         imagesavealpha($imageTot, true);
         $blanc = imagecolorallocate($imageCarte, 255, 255, 255);
         $noir = imagecolorallocate($imageCarte, 0, 0, 0);
+        $jaune = imagecolorallocate($imageCarte, 132, 87, 13);
+        $rouge = imagecolorallocate($imageCarte, 139, 0, 13);
+        $vert = imagecolorallocate($imageCarte, 43, 81, 11);
+        $bleu = imagecolorallocate($imageCarte, 3, 133, 155);
         imagealphablending($imageTot, true);
         imagettftext ( $imageTot, 15 , 0 ,(((144-(strlen($this->getNom())*8))/2)+42)  , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
         if($this->getCout() < 10){
-            imagettftext ( $imageTot, 30 , 0 , 33 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
+            $this->imagettfstroketext($imageTot, 30 , 0 , 33 , 60, $blanc,$bleu,$urlFont."/BERNHC.ttf" , $this->getCout(),2);
         }else{
-            imagettftext ( $imageTot, 30 , 0 , 23 , 60, $blanc , $urlFont."/BERNHC.ttf" , $this->getCout() );
+            $this->imagettfstroketext($imageTot, 30 , 0 , 23 , 60, $blanc,$bleu,$urlFont."/BERNHC.ttf" , $this->getCout(),2);
         }
-        imagettftext ( $imageTot, 12 , 0 , 38 , 225, $noir , $urlFont."/BERNHC.ttf" , $this->getPouvoir() );
+        imagettftext ( $imageTot, 10 , 0 , 38 , 225, $noir , $urlFont."/arialbd.ttf" , $this->getPouvoir() );
         $creatureCarte = $this->getCreature();
         if($creatureCarte != null){
-            imagettftext ( $imageTot, 15 , 0 , 177 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getAtk() );
-            imagettftext ( $imageTot, 15 , 0 , 211 , 48, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPdv() );
-            imagettftext ( $imageTot, 15 , 0 , 196 , 75, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getPm() );
+            $this->imagettfstroketext($imageTot, 20 , 0 , 177 , 48, $blanc,$jaune,$urlFont."/BERNHC.ttf" , $creatureCarte->getAtk(),1);
+            $this->imagettfstroketext($imageTot, 20 , 0 , 211 , 48, $blanc,$rouge,$urlFont."/BERNHC.ttf" , $creatureCarte->getPdv(),1);
+            $this->imagettfstroketext($imageTot, 20 , 0 , 196 , 75, $blanc,$vert,$urlFont."/BERNHC.ttf" , $creatureCarte->getPm(),1);
             imagettftext ( $imageTot, 10 , 0 , (((144-(strlen($creatureCarte->getClasse())*6))/2)+60) , 307, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getClasse() );
 
         }

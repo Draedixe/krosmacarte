@@ -22,6 +22,10 @@ liste_cartes:
     path: /carte/liste
     defaults: { _controller: CarteBundle:Carte:affichageListeCartes }
 
+voter_carte:
+    path: /carte/voter/{idCarte}
+    defaults: { _controller: CarteBundle:Carte:voterCarte }
+
 liste_extensions:
     path: /extension/liste
     defaults: { _controller: CarteBundle:Carte:affichageListeExtension }
