@@ -53,7 +53,7 @@ class Carte
     private $image;
 
     /**
-     * @ORM\ManyToOne(targetEntity="CarteBundle\Entity\Extension")
+     * @ORM\ManyToOne(targetEntity="CarteBundle\Entity\Extension", inversedBy="cartes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $extension;
@@ -375,7 +375,7 @@ class Carte
         $vert = imagecolorallocate($imageCarte, 43, 81, 11);
         $bleu = imagecolorallocate($imageCarte, 3, 133, 155);
         imagealphablending($imageTot, true);
-        imagettftext ( $imageTot, 15 , 0 ,(((144-(strlen($this->getNom())*8))/2)+42)  , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
+        imagettftext ( $imageTot, 15 , 0 ,(((175-(strlen($this->getNom())*9.5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ))/2)+39)  , 195, $blanc , $urlFont."/BERNHC.ttf" , $this->getNom() );
         if($this->getCout() < 10){
             $this->imagettfstroketext($imageTot, 30 , 0 , 33 , 60, $blanc,$bleu,$urlFont."/BERNHC.ttf" , $this->getCout(),2);
         }else{
@@ -384,9 +384,21 @@ class Carte
         imagettftext ( $imageTot, 10 , 0 , 38 , 225, $noir , $urlFont."/arialbd.ttf" , $this->getPouvoir() );
         $creatureCarte = $this->getCreature();
         if($creatureCarte != null){
-            $this->imagettfstroketext($imageTot, 20 , 0 , 177 , 48, $blanc,$jaune,$urlFont."/BERNHC.ttf" , $creatureCarte->getAtk(),1);
-            $this->imagettfstroketext($imageTot, 20 , 0 , 211 , 48, $blanc,$rouge,$urlFont."/BERNHC.ttf" , $creatureCarte->getPdv(),1);
-            $this->imagettfstroketext($imageTot, 20 , 0 , 196 , 75, $blanc,$vert,$urlFont."/BERNHC.ttf" , $creatureCarte->getPm(),1);
+            if($creatureCarte->getAtk() < 10){
+                $this->imagettfstroketext($imageTot, 20 , 0 , 177 , 48, $blanc,$jaune,$urlFont."/BERNHC.ttf" , $creatureCarte->getAtk(),1);
+            }else{
+                $this->imagettfstroketext($imageTot, 20 , 0 , 171 , 48, $blanc,$jaune,$urlFont."/BERNHC.ttf" , $creatureCarte->getAtk(),1);
+            }
+            if($creatureCarte->getPdv() < 10){
+                $this->imagettfstroketext($imageTot, 20 , 0 , 211 , 48, $blanc,$rouge,$urlFont."/BERNHC.ttf" , $creatureCarte->getPdv(),1);
+            }else{
+                $this->imagettfstroketext($imageTot, 20 , 0 , 205 , 48, $blanc,$rouge,$urlFont."/BERNHC.ttf" , $creatureCarte->getPdv(),1);
+            }
+            if($creatureCarte->getPm() < 10){
+                $this->imagettfstroketext($imageTot, 20 , 0 , 196 , 75, $blanc,$vert,$urlFont."/BERNHC.ttf" , $creatureCarte->getPm(),1);
+            }else{
+                $this->imagettfstroketext($imageTot, 20 , 0 , 190 , 75, $blanc,$vert,$urlFont."/BERNHC.ttf" , $creatureCarte->getPm(),1);
+            }
             imagettftext ( $imageTot, 10 , 0 , (((144-(strlen($creatureCarte->getClasse())*6))/2)+60) , 307, $blanc , $urlFont."/BERNHC.ttf" , $creatureCarte->getClasse() );
 
         }

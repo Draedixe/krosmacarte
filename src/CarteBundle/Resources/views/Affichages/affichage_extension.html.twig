@@ -1,7 +1,7 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
 
-{% block title %}Krosmacarte - {{ extension.nom }}{% endblock %}
+{% block title %} - {{ extension.nom }}{% endblock %}
 
 {% block fos_user_content %}
 
@@ -20,13 +20,17 @@
                 {% if app.user == extension.createur %}
                     <a style="margin-left:10%;" role="button" class="btn btn-danger btn-sm" href="{{ path('supprimer_carte', { 'idCarte': carte.id }) }}">Supprimer</a>
                 {% endif %}
-                <a  role="button" class="btn btn-default btn-sm" href="{{ path('voter_carte', { 'idCarte': carte.id }) }}">
+
                 {% if app.user in carte.votes %}
-                    <span class="glyphicon glyphicon-heart" aria-hidden="true"> Dislike - {{ carte.votes | length }}</span>
+                    <a  role="button" class="btn btn-info btn-sm" href="{{ path('voter_carte', { 'idCarte': carte.id }) }}">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true"> Dislike <span class="badge">{{ carte.votes | length }}</span></span>
+                    </a>
                 {% else %}
-                    <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"> Like - {{ carte.votes | length }}</span>
+                    <a  role="button" class="btn btn-default btn-sm" href="{{ path('voter_carte', { 'idCarte': carte.id }) }}">
+                        <span class="glyphicon glyphicon-heart-empty" aria-hidden="true"> Like <span class="badge">{{ carte.votes | length }}</span></span>
+                    </a>
                 {% endif %}
-                </a>
+
             </div>
             {% if loop.index%5 == 0 and loop.index != 0%}
                 </div>

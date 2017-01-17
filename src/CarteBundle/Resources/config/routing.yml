@@ -1,7 +1,3 @@
-creation_dieu:
-    path: /dieu/creation
-    defaults: { _controller: CarteBundle:Dieu:creationDieu }
-
 creation_carte:
     path: /carte/creation
     defaults: { _controller: CarteBundle:Carte:creationCarte }
@@ -14,13 +10,9 @@ creation_extension:
     path: /extension/creation
     defaults: { _controller: CarteBundle:Carte:creationExtension }
 
-liste_dieux:
-    path: /dieu/liste
-    defaults: { _controller: CarteBundle:Dieu:affichageListeDieux }
-
 liste_cartes:
-    path: /carte/liste
-    defaults: { _controller: CarteBundle:Carte:affichageListeCartes }
+    path: /carte/liste/{page}
+    defaults: { _controller: CarteBundle:Carte:affichageListeCartes, page:1 }
 
 voter_carte:
     path: /carte/voter/{idCarte}

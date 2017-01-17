@@ -32,54 +32,121 @@
         });
 
     </script>
-    <h3>Création d'une carte</h3>
+    <h2>Création d'une carte</h2>
 
-    <form id="formCreation" action="{{ path('valider_carte') }}" method="post" >
-        <label for="nom">Nom de la carte (18 caractères max) :</label><input type="text" name="nom"/><br/>
-        <label for="cout">Cout de la carte :</label><input type="number" name="cout"/><br/>
-        <label for="pouvoir">Pouvoir de la carte (attention, 4 lignes max et 28 caractères par lignes seulement) :</label><br/>
-        <textarea name="pouvoir" rows="4" cols="28"></textarea><br/>
-        <label for="image">Image de la carte :</label><input type="text" name="image"/><br/>
-        <label for="dieu">Dieu associé :</label>
-        <select name="dieu" id="dieu">
-            {% for dieu in dieux %}
-                <option id="{{ dieu.nom }}">{{ dieu.nom }}</option>
-            {% endfor %}
-        </select><br/>
+    <form class="form-horizontal" id="formCreation" action="{{ path('valider_carte') }}" method="post" >
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="nom">Nom de la carte (18 caractères max) :</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" id="nom" name="nom"  placeholder="Nom de la carte">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="cout">Coût de la carte :</label>
+            <div class="col-sm-1">
+                <input type="number" class="form-control" id="cout" name="cout" placeholder="Cout">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="pouvoir">Pouvoir de la carte (attention, 4 lignes max et 28 caractères par lignes seulement) :</label>
+            <div class="col-sm-2">
+                <textarea class="form-control" rows="4" id="pouvoir" name="pouvoir"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="image">Image de la carte (format PNG/JPG/JPEG) :</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="image" name="image" placeholder="Image de la carte">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="dieu">Dieu associé :</label>
+            <div class="col-sm-2">
+                <select class="form-control" name="dieu" id="dieu">
+                    {% for dieu in dieux %}
+                        <option id="{{ dieu.nom }}">{{ dieu.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
         <div id="formNonInf">
-            <label for="rarete">Rareté :</label>
-            <select name="rarete" id="rarete">
-                {% for rarete in raretes %}
-                    <option id="{{ rarete.nom }}">{{ rarete.nom }}</option>
-                {% endfor %}
-            </select><br/>
-            <label for="niveau">Type de carte :</label>
-            <input class="radioType" id="radioSort" type="radio" name="type" value="sort" checked> Sort
-            <input class="radioType" id="radioCrea" type="radio" name="type" value="crea"> Créature<br>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="rarete">Rareté :</label>
+                <div class="col-sm-2">
+                    <select class="form-control" name="rarete" id="rarete">
+                        {% for rarete in raretes %}
+                            <option id="{{ rarete.nom }}">{{ rarete.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="niveau">Type de carte :</label>
+                <div class="col-sm-4">
+                    <div class="radio">
+                        <label><input class="radioType" id="radioSort" type="radio" name="type" value="sort" checked>Sort</label>
+                    </div>
+                    <div class="radio">
+                        <label><input class="radioType" id="radioSort" type="radio" name="type" value="crea" >Créature</label>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="formInfinite" hidden>
-            <label for="niveau">Niveau de l'infinite :</label>
-            <input class="radioNiveau" type="radio" name="niveau" value="1" checked> 1
-            <input class="radioNiveau" type="radio" name="niveau" value="2"> 2
-            <input class="radioNiveau" type="radio" name="niveau" value="3"> 3<br>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="niveau">Niveau de l'infinite :</label>
+                <div class="col-sm-4">
+                    <label class="radio-inline"><input id="radioNiveau" type="radio" name="niveau" value="1" checked>1</label>
+                    <label class="radio-inline"><input id="radioNiveau" type="radio" name="niveau" value="2" >2</label>
+                    <label class="radio-inline"><input id="radioNiveau" type="radio" name="niveau" value="3" >3</label>
+                </div>
+            </div>
         </div>
         <div id="formCrea" hidden>
-            <label for="pdv">Pdv de la créature :</label><input type="number" name="pdv"/><br/>
-            <label for="atk">Atk de la créature :</label><input type="number" name="atk"/><br/>
-            <label for="pm">PM de la créature :</label><input type="number" name="pm"/><br/>
-            <label for="classe">Classe de la créature (24 caractères max) :</label><input type="text" name="classe"/><br/>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="pdv">Points de vie :</label>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="pdv" name="pdv" placeholder="Pdv">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="atk">Attaque :</label>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="atk" name="atk" placeholder="ATK">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="pm">Points de mouvement :</label>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="pm" name="pm" placeholder="PM">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="classe">Classe de la créature (24 caractères max) :</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="classe" name="classe"  placeholder="Classe de la créature">
+                </div>
+            </div>
         </div>
-
-        <label for="extension">Extension :</label>
-        <select name="extension" id="extension">
-            {% if not extension is defined %}
-                    {% for extension in extensions %}
+        <div class="form-group">
+            <label class="control-label col-sm-3" for="extension">Extension :</label>
+            <div class="col-sm-2">
+                <select class="form-control" name="extension" id="extension">
+                    {% if not extension is defined %}
+                        {% for extension in extensions %}
+                            <option value="extension_{{ extension.id }}">{{ extension.nom }}</option>
+                        {% endfor %}
+                    {% else %}
                         <option value="extension_{{ extension.id }}">{{ extension.nom }}</option>
-                    {% endfor %}
-            {% else %}
-                <option value="extension_{{ extension.id }}">{{ extension.nom }}</option>
-            {% endif %}
-        </select><br/>
-        <input type="submit" value="Valider"/>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
     </form>
 {% endblock %}

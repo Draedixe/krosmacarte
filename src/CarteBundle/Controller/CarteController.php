@@ -192,12 +192,29 @@ class CarteController extends Controller
         ));
     }
 
-    public function affichageListeCartesAction()
+    public function affichageListeCartesAction($page)
     {
         $cartes = $this->getDoctrine()->getRepository('CarteBundle:Carte')->findAll();
 
+
+
+        $nbLien = count($cartes);
+        if ($nbLien%10==0)
+        {
+            $nbPages=(int)($nbLien/10);
+        }
+        else
+        {
+            $nbPages=(int)($nbLien/10)+1;
+        }
+        if ($nbPages==0)
+        {
+            $nbPages=1;
+        }
         return $this->render('CarteBundle:Affichages:liste_cartes.html.twig', array(
-            'cartes' => $cartes
+            'cartes' => array_slice($cartes, 10*($page-1), 10),
+            'nbPages' => $nbPages,
+            'currentPage' => $page
         ));
     }
 
